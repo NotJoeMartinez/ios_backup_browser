@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	
+	<ul>
+		<li><a href="report.html">Data Overview</a></li>
+		<li><a href="contacts.html">Contacts</a></li>
+	</ul>
+
+	<h1>
+		Snapshot size: {{ all_data.size }} 
+	</h1>
+	<h1>
+		Total Artifacts: {{ all_data.count }} 
+	</h1>
+	<script>
+		window.onload = function() {
+		
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			title: {
+				text: "Breakdown of storage"
+			},
+			data: [{
+				type: "pie",
+				startAngle: 240,
+				yValueFormatString: "##0.00\"%\"",
+				indexLabel: "{label} {y}",
+				dataPoints: {{ json_data|safe }}
+	
+			}]
+		});
+		chart.render();
+		
+		}
+		</script>
+<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+	<table>
+		<th>Artifact Datatype</th>
+		<th>Size of artifacts</th>
+		<th>Number of artifacts</th>
+		{% for item in dataset %}
+		<tr>
+		   <td class="c1">{{ item.type }}</td>
+		   <td class="c2">{{ item.size }}</td>
+		   <td class="c3">{{ item.count }}</td>
+		</tr>
+		{% endfor %}
+		</table>
+
+
+
+</body>
+</html>
