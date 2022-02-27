@@ -1,6 +1,6 @@
-# Hackwest iOS forensics
+# iOS Backup Browser 
+Export your contacts & media form iOS backups 
 ![frontend](doc/imgs/fdcdeb541d1a297e6580b44319ff9f22.png)
-![contacts](doc/imgs/6bffe95c43fdc247a47ff0dbcc757a77.png)
 
 ### Installation
 ```bash
