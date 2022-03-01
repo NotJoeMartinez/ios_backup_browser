@@ -26,7 +26,7 @@ optional arguments:
                         Save media from backup to specified directory
 ```
 
-This project requires that you have an encrypted iOS backup. 
+This project requires that you have an unencrypted iOS backup. 
 You first need to run the program with the `--find-mimes`  flag 
 with an argument to the root directory of your backup
 ```bash
