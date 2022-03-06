@@ -1,8 +1,12 @@
-import argparse, os, sqlite3 
+import argparse, sys 
 from scripts import *
 from scripts import find_db_contacts 
 
-def main(args):
+def main(parser, args):
+    if len(sys.argv) < 2:
+        parser.print_help()
+        exit(0)
+    
     make_db("ios_data.db")
     if args.find_mimes:
         parse_data(args.find_mimes)
@@ -27,4 +31,4 @@ if __name__ == '__main__':
     parser.add_argument('-em','--export-media', action="store", help='Save media from backup to specified directory')
 
     args = parser.parse_args()
-    main(args)
+    main(parser, args)

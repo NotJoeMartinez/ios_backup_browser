@@ -1,4 +1,4 @@
-import sys, os, sqlite3
+import sys, os, sqlite3, hashlib
 import magic
 from alive_progress import alive_bar
 
@@ -9,15 +9,15 @@ def parse_data(filepath):
             total_files += 1
 
     current_count = 0
-    with alive_bar(total_files) as bar:
+    with alive_bar(total_files, title="Building database. This might take some time") as bar:
         for root, dir, files in os.walk(filepath):
             for file in files:       
                 full_path = os.path.join(root, file)
                 file_size = os.path.getsize(full_path)
                 file_type = magic.from_file(full_path)
                 current_count += 1
-                # progress(current_count, total_files)
-                insert_db("ios_data.db", full_path, file_size, file_type)
+                file_hash = get_file_hash(full_path)
+                insert_db("ios_data.db", full_path, file_size, file_type, file_hash)
                 bar()    
 
 
@@ -37,10 +37,10 @@ def progress(count, total, status=''):
 
 
 
-def insert_db(db_path, fpath, file_size, file_type):
+def insert_db(db_path, fpath, file_size, file_type, file_hash):
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    cur.execute("INSERT INTO ios VALUES (?, ?, ?)", (fpath, file_size, file_type))
+    cur.execute("INSERT INTO ios VALUES (?, ?, ?, ?)", (fpath, file_size, file_type, file_hash))
     con.commit()
     con.close()
 
@@ -50,7 +50,15 @@ def make_db(db_path):
     cur = con.cursor()
     cur.execute('''
             CREATE TABLE IF NOT EXISTS ios 
-            (fpath TEXT, size TEXT, mimetype TEXT) 
+            (fpath TEXT, size TEXT, mimetype TEXT, shasum TEXT) 
                 ''')
     con.commit()
     con.close()            
+
+
+def get_file_hash(fpath):
+    with open(fpath, "rb") as f:
+        bytes = f.read()
+        readable_hash = hashlib.sha256(bytes).hexdigest()
+        return readable_hash
+
