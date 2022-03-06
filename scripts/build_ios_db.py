@@ -13,11 +13,16 @@ def parse_data(filepath):
         for root, dir, files in os.walk(filepath):
             for file in files:       
                 full_path = os.path.join(root, file)
-                file_size = os.path.getsize(full_path)
-                file_type = magic.from_file(full_path)
+
+                if check_if_exists(full_path) == True:
+                    pass
+                else:
+                    file_size = os.path.getsize(full_path)
+                    file_type = magic.from_file(full_path)
+                    file_hash = get_file_hash(full_path)
+                    insert_db("ios_data.db", full_path, file_size, file_type, file_hash)
+
                 current_count += 1
-                file_hash = get_file_hash(full_path)
-                insert_db("ios_data.db", full_path, file_size, file_type, file_hash)
                 bar()    
 
 
@@ -61,4 +66,16 @@ def get_file_hash(fpath):
         bytes = f.read()
         readable_hash = hashlib.sha256(bytes).hexdigest()
         return readable_hash
+
+def check_if_exists(fpath):
+    con = sqlite3.connect("ios_data.db")
+    c = con.cursor()
+    c.execute('''SELECT fpath FROM ios WHERE fpath=?''', (fpath,))
+    exists = c.fetchall()
+    con.close()  
+    if not exists:
+        return False
+    else:
+        return True
+
 

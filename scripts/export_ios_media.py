@@ -7,7 +7,6 @@ from alive_progress import config_handler
 
 
 ## TODO: Error checking if datatype does not exist
-## TODO: Prevent duplicate files from being copied
 ## TODO: distinguish XML/ASCII
 
 def export_media(db_path, output_dir):
@@ -22,7 +21,12 @@ def export_media(db_path, output_dir):
 
 def move_mime(db_path, output_dir, extention, keywords):
     output_dir= f"{output_dir}/{extention}s"
-    os.makedirs(output_dir)
+
+    if os.path.isdir(output_dir):
+        pass
+    else:
+        os.makedirs(output_dir)
+
     con = sqlite3.connect(db_path)
     cur = con.cursor()
     cur.execute("SELECT * FROM ios")
@@ -30,9 +34,15 @@ def move_mime(db_path, output_dir, extention, keywords):
     con.close()
 
     move_list = []
+    sha_list = []
     for row in res:
         if keywords in row[2]:
-            move_list.append(row[0])
+            # prevent from moving duplicates
+            if row[3] in sha_list:
+                pass
+            else:
+                move_list.append(row[0])
+                sha_list.append(row[3])
 
     total_files = len(move_list)
     with alive_bar(total_files, title=f"Moving {extention}") as bar:
