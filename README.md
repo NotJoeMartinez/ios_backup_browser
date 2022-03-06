@@ -30,7 +30,7 @@ This project requires that you have an unencrypted iOS backup.
 You first need to run the program with the `--find-mimes`  flag 
 with an argument to the root directory of your backup
 ```bash
-python ios_backup_browser.py --find-mimes /path/to/ios/backup 
+python ios_backup_browser.py --find-mimes [/path/to/ios/backup]
 ```
 This will then build a `ios_data.db` database in your home directory 
 
@@ -55,5 +55,5 @@ python ios_backup_browser.py --find-report
 Copies all JPEG images found in snapshot to directory
 provided by argument.
 ```bash
-python ios_backup_browser.py --export-media [output directory]
+python ios_backup_browser.py --export-media [path/to/output/directory]
 ```
